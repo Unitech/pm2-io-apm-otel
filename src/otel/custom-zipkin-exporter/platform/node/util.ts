@@ -37,8 +37,6 @@ export function prepareSend(
     zipkinSpans: zipkinTypes.Span[],
     done: (result: ExportResult) => void
   ) {
-    // TODO: remove this log
-    console.log('#CALL SEND zipkinSpans', zipkinSpans)
     if (zipkinSpans.length === 0) {
       diag.debug('Zipkin send with empty spans');
       return done({ code: ExportResultCode.SUCCESS });

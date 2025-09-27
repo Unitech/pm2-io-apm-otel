@@ -95,10 +95,7 @@ export class IPCTransport extends EventEmitter2 implements Transport {
     }
 
     try {
-      // TODO: remove this log
-      if (channel.match(/trace/)) {
-        console.log('PMX send', channel, payload)
-      }
+      this.logger(`Send on channel ${channel}`)
       process.send({ type: channel, data: payload })
     } catch (err) {
       this.logger('Process disconnected from parent !')

@@ -1,6 +1,6 @@
 {
   "name": "@pm2/io",
-  "version": "7.0.0~dev7",
+  "version": "7.0.0~dev9",
   "description": "PM2.io NodeJS APM",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -87,7 +87,6 @@
     "@opentelemetry/exporter-metrics-otlp-http": "^0.57.0",
     "@opentelemetry/exporter-zipkin": "^1.30.0",
     "@opentelemetry/sdk-node": "^0.57.0",
-    "@pm2/agent": "file:.yalc/@pm2/agent",
     "async": "~2.6.1",
     "debug": "~4.3.1",
     "eventemitter2": "^6.3.1",

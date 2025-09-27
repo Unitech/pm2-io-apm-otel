@@ -111,21 +111,23 @@ export class TracingFeature implements Feature {
   private otel: NodeSDK | undefined;
 
   init (config: IOConfig): void {
-    config.tracing = enabledTracingConfig;
-
     // TODO: review FF approach
+    this.logger('init tracing', config)
 
-    // if (config.tracing === undefined) {
-    //   config.tracing = enabledTracingConfig
-    // } else if (config.tracing === true) {
-    //   config.tracing = enabledTracingConfig
-    // } else if (config.tracing === false) {
-    //   config.tracing = enabledTracingConfig
-    // }
-    // if (config.tracing.enabled === false) {
-    //   console.log('tracing disabled ????' ,{config})
-    //   // return console.log('tracing disabled')
-    // }
+    if (config.tracing === undefined) {
+      config.tracing = defaultTracingConfig
+    } else if (config.tracing === true) {
+      config.tracing = enabledTracingConfig
+    } else if (config.tracing === false) {
+      config.tracing = defaultTracingConfig
+    }
+
+    if (config.tracing.enabled === false) {
+      this.logger('tracing disabled')
+      return
+    } else {
+      this.logger('tracing enabled')
+    }
 
     this.options = enabledTracingConfig
 
@@ -185,14 +187,8 @@ export class TracingFeature implements Feature {
 		this.otel.start();
 
     Configuration.configureModule({
-      census_tracing: true
+      otel_tracing: true
     })
-  }
-
-  private isDebugEnabled () {
-    return true
-    // return typeof process.env.DEBUG === 'string' &&
-    //   (process.env.DEBUG.indexOf('axm:*') >= 0 || process.env.DEBUG.indexOf('axm:tracing') >= 0)
   }
 
   getTracer (): Tracer {
@@ -204,35 +200,32 @@ export class TracingFeature implements Feature {
 
   destroy () {
     if (!this.otel) return
-    console.log('stop census tracer')
+    this.logger('stop otel tracer')
     // TODO: handle as blocking
     this.otel.shutdown();
 
     Configuration.configureModule({
-      census_tracing: false
+      otel_tracing: false
     })
   }
 }
 
 function applyMatcher(matcher: IgnoreMatcher<unknown>, request: IncomingMessage) {
-  console.log('applyMatcher', {matcher, request})
+  this.logger('applyMatcher', {matcher, request: request.url})
+
   if (!matcher) {
-    console.log('no matcher')
     return false
   }
   if (!request.url) {
-    console.log('no request url')
     return false
   }
 
   if (typeof matcher === 'string') {
-    console.log('matcher is string')
     return request.url.includes(matcher)
   }
   if (matcher instanceof RegExp) {
-    console.log('matcher is RegExp')
     return matcher.test(request.url)
   }
-  console.log('matcher is function')
+
   return matcher(request.url, request)
 }
