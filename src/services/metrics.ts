@@ -9,28 +9,30 @@ import { Transport } from './transport'
 import * as Debug from 'debug'
 import Gauge from '../utils/metrics/gauge'
 
-export enum MetricType {
-  'meter' = 'meter',
-  'histogram' = 'histogram',
-  'counter' = 'counter',
-  'gauge' = 'gauge',
-  'metric' = 'metric' // deprecated, must use gauge
-}
+export const MetricType = {
+  'meter': 'meter',
+  'histogram': 'histogram',
+  'counter': 'counter',
+  'gauge': 'gauge',
+  'metric': 'metric' // deprecated, must use gauge
+} as const
+export type MetricType = (typeof MetricType)[keyof typeof MetricType]
 
-export enum MetricMeasurements {
-  'min' = 'min',
-  'max' = 'max',
-  'sum' = 'sum',
-  'count' = 'count',
-  'variance' = 'variance',
-  'mean' = 'mean',
-  'stddev' = 'stddev',
-  'median' = 'median',
-  'p75' = 'p75',
-  'p95' = 'p95',
-  'p99' = 'p99',
-  'p999' = 'p999'
-}
+export const MetricMeasurements = {
+  'min': 'min',
+  'max': 'max',
+  'sum': 'sum',
+  'count': 'count',
+  'variance': 'variance',
+  'mean': 'mean',
+  'stddev': 'stddev',
+  'median': 'median',
+  'p75': 'p75',
+  'p95': 'p95',
+  'p99': 'p99',
+  'p999': 'p999'
+} as const
+export type MetricMeasurements = (typeof MetricMeasurements)[keyof typeof MetricMeasurements]
 
 export interface InternalMetric {
   /**

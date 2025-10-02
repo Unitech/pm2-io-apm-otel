@@ -39,6 +39,7 @@ export function prepareSend(
   ) {
     if (zipkinSpans.length === 0) {
       diag.debug('Zipkin send with empty spans');
+      // TODO: clarify need of this return
       return done({ code: ExportResultCode.SUCCESS });
     }
 
@@ -51,5 +52,7 @@ export function prepareSend(
         this.transport.send('trace-span', span)
       }
     })
+
+    return done({ code: ExportResultCode.SUCCESS });
   };
 }

@@ -28,6 +28,7 @@ export class IPCTransport extends EventEmitter2 implements Transport {
 
     // if the process is standalone, the fact that there is a listener attached
     // forbid the event loop to exit when there are no other task there
+    // @ts-expect-error
     if (cluster.isWorker === false) {
       this.autoExitHook()
     }
@@ -38,6 +39,7 @@ export class IPCTransport extends EventEmitter2 implements Transport {
     // clean listener if event loop is empty
     // important to ensure apm will not prevent application to stop
     this.autoExitHandle = setInterval(() => {
+      // @ts-expect-error
       const currentProcess: any = (cluster.isWorker) ? cluster.worker.process : process
 
       if (currentProcess._getActiveHandles().length === 3) {
