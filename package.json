@@ -1,6 +1,6 @@
 {
   "name": "@pm2/io",
-  "version": "7.0.0~dev11",
+  "version": "7.0.0-build11",
   "description": "PM2.io NodeJS APM",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",

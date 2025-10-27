@@ -1,5 +1,4 @@
 .idea
-src
 ./config
 examples
 test
@@ -7,9 +6,7 @@ tsconfig.json
 tslint.json
 .travis.yml
 .github
-build/temp
-build/docs
-
+docker*
 coverage
 .nyc_output
 *.log
