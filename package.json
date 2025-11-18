@@ -1,5 +1,5 @@
 {
-  "name": "@pm2/io",
+  "name": "pm2-io-otel",
   "version": "7.0.0",
   "description": "PM2.io NodeJS APM",
   "main": "build/main/index.js",
