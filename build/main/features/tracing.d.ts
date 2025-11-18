@@ -1,6 +1,6 @@
 import { Feature } from '../featureManager';
 import { IOConfig } from '../pmx';
-import { Tracer } from "@opentelemetry/api";
+import { Tracer } from '@opentelemetry/api';
 import * as httpModule from 'http';
 export type IgnoreMatcher<T> = string | RegExp | ((url: string, request: T) => boolean);
 export type HttpPluginConfig = {
@@ -23,7 +23,7 @@ export declare class TracingFeature implements Feature {
     private options;
     private logger;
     private otel;
-    init(config: IOConfig): void;
-    getTracer(): Tracer;
+    init(config: IOConfig): Promise<void>;
+    getTracer(): Promise<Tracer>;
     destroy(): void;
 }

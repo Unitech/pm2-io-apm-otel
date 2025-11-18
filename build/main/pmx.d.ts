@@ -47,7 +47,7 @@ export default class PMX {
     action(name: string, opts?: Object, fn?: Function): void;
     onExit(callback: Function): any;
     emit(name: string, data: Object): any;
-    getTracer(): Tracer | undefined;
+    getTracer(): Promise<Tracer | undefined>;
     initModule(opts: any, cb?: Function): any;
     expressErrorHandler(): (err: any, req: any, res: any, next: any) => any;
     koaErrorHandler(): (ctx: any, next: any) => Promise<void>;
