@@ -5,3 +5,5 @@ src/**.js
 coverage
 .nyc_output
 *.log
+.yalc
+yalc.lock
