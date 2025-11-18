@@ -2,15 +2,9 @@ import { Feature } from '../featureManager'
 import * as Debug from 'debug'
 import Configuration from '../configuration'
 import { IOConfig } from '../pmx'
+import { Tracer } from '@opentelemetry/api'
 
-import {
-  trace,
-  Tracer,
-} from "@opentelemetry/api";
-
-import { NodeSDK } from '@opentelemetry/sdk-node'
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { CustomZipkinExporter } from '../otel/custom-zipkin-exporter/zipkin';
+// OpenTelemetry modules will be dynamically imported when needed
 
 import * as httpModule from 'http'
 import { IncomingMessage } from 'http';
@@ -108,9 +102,9 @@ const enabledTracingConfig: TracingConfig = {
 export class TracingFeature implements Feature {
   private options: TracingConfig
   private logger: Function = Debug('axm:tracing')
-  private otel: NodeSDK | undefined;
+  private otel: any | undefined;
 
-  init (config: IOConfig): void {
+  async init (config: IOConfig): Promise<void> {
     // TODO: review FF approach
     this.logger('init tracing', config)
 
@@ -145,6 +139,11 @@ export class TracingFeature implements Feature {
     if (config.tracing.ignoreIncomingPaths === undefined) {
       config.tracing.ignoreIncomingPaths = enabledTracingConfig.ignoreIncomingPaths
     }
+
+    // Dynamic imports for OpenTelemetry modules
+    const { NodeSDK } = await import('@opentelemetry/sdk-node')
+    const { getNodeAutoInstrumentations } = await import('@opentelemetry/auto-instrumentations-node')
+    const { CustomZipkinExporter } = await import('../otel/custom-zipkin-exporter/zipkin')
 
     const traceExporter = new CustomZipkinExporter();
 
@@ -191,10 +190,11 @@ export class TracingFeature implements Feature {
     })
   }
 
-  getTracer (): Tracer {
+  async getTracer (): Promise<Tracer> {
     if (!this.options.serviceName) {
       throw new Error('serviceName is required')
     }
+    const { trace } = await import('@opentelemetry/api')
     return trace.getTracer(this.options.serviceName)
   }
 

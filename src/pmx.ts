@@ -386,7 +386,7 @@ export default class PMX {
   /**
    * Get the tracing agent to add more information about traces
    */
-  getTracer (): Tracer | undefined {
+  async getTracer (): Promise<Tracer | undefined> {
     const tracing = this.featureManager.get('tracing') as TracingFeature
     return tracing.getTracer()
   }
