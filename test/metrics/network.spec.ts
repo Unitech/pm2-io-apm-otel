@@ -2,9 +2,14 @@ import { expect, assert } from 'chai'
 import { fork } from 'child_process'
 import { resolve } from 'path'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 
@@ -14,7 +19,7 @@ describe('Network', function () {
   it('should send network data', (done) => {
     const child = launch('../fixtures/metrics/networkChild')
 
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
 
       if (pck.type === 'axm:monitor' && pck.data['Network Out']) {
         child.kill('SIGKILL')
@@ -33,7 +38,7 @@ describe('Network', function () {
   it('should only send upload data', (done) => {
     const child = launch('../fixtures/metrics/networkWithoutDownloadChild')
 
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
 
       if (pck.type === 'axm:monitor' && pck.data['Network Out'] && pck.data['Network Out'].value !== '0 B/sec') {
         child.kill('SIGKILL')

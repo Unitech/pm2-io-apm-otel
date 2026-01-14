@@ -29,9 +29,9 @@ export default class EventLoopHandlesRequestsMetric implements MetricInterface {
 
   private metricService: MetricService | undefined
   private logger: any = Debug('axm:features:metrics:eventloop')
-  private requestTimer: NodeJS.Timer | undefined
-  private handleTimer: NodeJS.Timer | undefined
-  private delayTimer: NodeJS.Timer | undefined
+  private requestTimer: NodeJS.Timeout | undefined
+  private handleTimer: NodeJS.Timeout | undefined
+  private delayTimer: NodeJS.Timeout | undefined
   private delayLoopInterval: number = 1000
   private runtimeStatsService: RuntimeStatsService | undefined
   private handle: (data: any) => void | undefined

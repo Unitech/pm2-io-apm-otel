@@ -6,6 +6,7 @@ export interface ExporterConfig {
     statusCodeTagName?: string;
     statusDescriptionTagName?: string;
     getExportRequestHeaders?: () => Record<string, string> | undefined;
+    outbound?: boolean;
 }
 export interface Span {
     traceId: string;

@@ -4,9 +4,14 @@ import { exec, fork } from 'child_process'
 import { resolve } from 'path'
 import * as pmx from '../src'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 
@@ -28,15 +33,17 @@ describe('Entrypoint', function () {
       const child = launch('fixtures/entrypointChild')
       let hasConfig = false
 
-      child.on('message', res => {
+      child.on('message', (res: IPCMessage | string) => {
+        if (typeof res === 'string') {
+          if (res === 'ready') {
+            assert(hasConfig === true, 'should have both the good config and is ready sent')
+            child.kill('SIGINT')
+          }
+          return
+        }
 
         if (res.type && res.type === 'axm:option:configuration' && res.data && res.data.metrics && res.data.metrics.eventLoop === false) {
           hasConfig = true
-        }
-
-        if (res === 'ready') {
-          assert(hasConfig === true, 'should have both the good config and is ready sent')
-          child.kill('SIGINT')
         }
       })
 

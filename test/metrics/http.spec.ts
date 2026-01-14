@@ -3,9 +3,14 @@ import { expect, assert } from 'chai'
 import { fork } from 'child_process'
 import { resolve } from 'path'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 describe.skip('HttpWrapper', function () {
@@ -14,7 +19,7 @@ describe.skip('HttpWrapper', function () {
     const child = launch('../fixtures/metrics/httpWrapperChild')
     let called = false
 
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
 
       if (pck.type === 'axm:monitor') {
         if (called === true) return
@@ -34,7 +39,7 @@ describe.skip('HttpWrapper', function () {
   it('should use tracing system', (done) => {
     const child = launch('../fixtures/metrics/tracingChild')
     let called = false
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
       if (pck.type === 'trace-span' && called === false) {
         called = true
         expect(pck.data.hasOwnProperty('id')).to.equal(true)

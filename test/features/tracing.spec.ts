@@ -2,9 +2,14 @@ import { expect, assert } from 'chai'
 import { fork } from 'child_process'
 import { resolve } from 'path'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ],
+    execArgv: [ '-r', 'ts-node/register' ],
     env: { NODE_ENV: 'test' }
   })
 }
@@ -15,7 +20,7 @@ describe.skip('Tracing with IPC transport', function () {
   it('should use tracing system', (done) => {
     const child = launch('../fixtures/metrics/tracingChild')
     const spans: any[] = []
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
       if (pck.type !== 'trace-span') return
       expect(pck.data.hasOwnProperty('id')).to.equal(true)
       expect(pck.data.hasOwnProperty('traceId')).to.equal(true)

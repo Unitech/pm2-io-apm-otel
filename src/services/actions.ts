@@ -14,7 +14,7 @@ export class Action {
 
 export class ActionService {
 
-  private timer: NodeJS.Timer | undefined = undefined
+  private timer: NodeJS.Timeout | undefined = undefined
   private transport: Transport | undefined = undefined
   private actions: Map<string, Action> = new Map<string, Action>()
   private logger: Function = Debug('axm:services:actions')

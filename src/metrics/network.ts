@@ -23,7 +23,7 @@ const allEnabled: NetworkTrafficConfig = {
 
 export default class NetworkMetric implements MetricInterface {
   private metricService: MetricService | undefined
-  private timer: NodeJS.Timer | undefined
+  private timer: NodeJS.Timeout | undefined
   private logger: Function = Debug('axm:features:metrics:network')
   private socketProto: any
 

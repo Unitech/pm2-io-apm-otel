@@ -2,9 +2,14 @@ import { expect, assert } from 'chai'
 import { fork, exec } from 'child_process'
 import { resolve } from 'path'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 
@@ -14,7 +19,7 @@ describe('V8', function () {
     const child = launch('../fixtures/metrics/gcv8Child.ts')
     let receive = false
 
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
 
       if (pck.type === 'axm:monitor' && receive === false) {
         receive = true

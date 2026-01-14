@@ -80,7 +80,7 @@ export class TransactionAggregator extends EventEmitter2 {
     }
   }
   private privacyRegex: RegExp = /":(?!\[|{)\\"[^"]*\\"|":(["'])(?:(?=(\\?))\2.)*?\1|":(?!\[|{)[^,}\]]*|":\[[^{]*]/g
-  private worker: NodeJS.Timer | undefined
+  private worker: NodeJS.Timeout | undefined
 
   init (sendInterval: number = 30000) {
     this.worker = setInterval(_ => {

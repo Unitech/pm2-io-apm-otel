@@ -10,7 +10,7 @@ export class IPCTransport extends EventEmitter2 implements Transport {
   private initiated = false // tslint:disable-line
   private logger: Function = Debug('axm:transport:ipc')
   private onMessage: any | undefined
-  private autoExitHandle: NodeJS.Timer | undefined
+  private autoExitHandle: NodeJS.Timeout | undefined
 
   init (config?: TransportConfig): Transport {
     this.logger('Init new transport service')

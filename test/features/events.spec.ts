@@ -4,9 +4,14 @@ import 'mocha'
 
 import { resolve } from 'path'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 
@@ -16,7 +21,7 @@ describe('EventsFeature', function () {
 
     it('should emit an event', (done) => {
       const child = launch('../fixtures/features/eventsChild')
-      child.on('message', res => {
+      child.on('message', (res: IPCMessage) => {
         if (res.type === 'human:event') {
           child.kill('SIGKILL')
           expect(res.data.__name).to.equal('myEvent')

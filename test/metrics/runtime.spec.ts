@@ -2,11 +2,16 @@ import { expect, assert } from 'chai'
 import { fork } from 'child_process'
 import { resolve } from 'path'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 //process.env.DEBUG = 'axm:services:runtimeStats,axm:features:metrics:runtime'
 
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 
@@ -16,7 +21,7 @@ describe.skip('RuntimeStatsMetrics', function () {
   it('should get GC stats', (done) => {
     const child = launch('../fixtures/metrics/gcv8Child')
 
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
       if (pck.type === 'axm:monitor') {
         const metricsName = Object.keys(pck.data)
         const hasGCMetrics = metricsName.some(name => !!name.match(/GC/))
@@ -36,7 +41,7 @@ describe.skip('RuntimeStatsMetrics', function () {
     const child = launch('../fixtures/metrics/gcv8Child')
 
     setTimeout(_ => {
-      child.on('message', pck => {
+      child.on('message', (pck: IPCMessage) => {
         if (pck.type === 'axm:monitor') {
           const metricsName = Object.keys(pck.data)
           assert(metricsName.every(name => !name.match(/GC/)), 'should have no GC metrics')

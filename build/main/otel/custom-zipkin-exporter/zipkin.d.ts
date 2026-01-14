@@ -11,6 +11,7 @@ export declare class CustomZipkinExporter implements SpanExporter {
     private _serviceName?;
     private _isShutdown;
     private _sendingPromises;
+    private _outbound;
     private transport;
     constructor(config?: zipkinTypes.ExporterConfig);
     export(spans: ReadableSpan[], resultCallback: (result: ExportResult) => void): void;

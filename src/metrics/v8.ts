@@ -31,7 +31,7 @@ const defaultOptions: V8MetricsConfig = {
 
 export default class V8Metric implements MetricInterface {
 
-  private timer: NodeJS.Timer | undefined
+  private timer: NodeJS.Timeout | undefined
   private TIME_INTERVAL: number = 800
   private metricService: MetricService | undefined
   private logger: Function = Debug('axm:features:metrics:v8')

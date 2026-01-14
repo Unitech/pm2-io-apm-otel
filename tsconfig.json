@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "es2022",
     "outDir": "build/main",
     "rootDirs": ["src"],

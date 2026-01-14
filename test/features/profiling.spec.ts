@@ -6,9 +6,14 @@ import { resolve } from 'path'
 // for node 8
 process.env.FORCE_INSPECTOR = '1'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 
@@ -21,7 +26,17 @@ describe('ProfilingAction', function () {
       const child = launch('../fixtures/features/profilingChild')
       let uuid
 
-      child.on('message', res => {
+      child.on('message', (res: IPCMessage | string) => {
+        if (typeof res === 'string') {
+          if (res === 'initialized') {
+            child.send('km:cpu:profiling:start')
+
+            setTimeout(function () {
+              child.send('km:cpu:profiling:stop')
+            }, 500)
+          }
+          return
+        }
 
         if (res.type === 'axm:action') {
           expect(res.data.action_type).to.equal('internal')
@@ -41,14 +56,6 @@ describe('ProfilingAction', function () {
           child.kill('SIGINT')
           done()
         }
-
-        if (res === 'initialized') {
-          child.send('km:cpu:profiling:start')
-
-          setTimeout(function () {
-            child.send('km:cpu:profiling:stop')
-          }, 500)
-        }
       })
     })
 
@@ -56,7 +63,16 @@ describe('ProfilingAction', function () {
       const child = launch('../fixtures/features/profilingChild')
       let uuid
 
-      child.on('message', res => {
+      child.on('message', (res: IPCMessage | string) => {
+        if (typeof res === 'string') {
+          if (res === 'initialized') {
+            child.send({
+              msg: 'km:cpu:profiling:start',
+              opts: { timeout: 500 }
+            })
+          }
+          return
+        }
 
         if (res.type === 'axm:action') {
           expect(res.data.action_type).to.equal('internal')
@@ -76,13 +92,6 @@ describe('ProfilingAction', function () {
           child.kill('SIGINT')
           done()
         }
-
-        if (res === 'initialized') {
-          child.send({
-            msg: 'km:cpu:profiling:start',
-            opts: { timeout: 500 }
-          })
-        }
       })
     })
 
@@ -91,7 +100,17 @@ describe('ProfilingAction', function () {
         const child = launch('../fixtures/features/profilingChild')
         let uuid
 
-        child.on('message', res => {
+        child.on('message', (res: IPCMessage | string) => {
+          if (typeof res === 'string') {
+            if (res === 'initialized') {
+              child.send('km:cpu:profiling:start')
+
+              setTimeout(function () {
+                child.send('km:cpu:profiling:stop')
+              }, 500)
+            }
+            return
+          }
 
           if (res.type === 'axm:action') {
             expect(res.data.action_type).to.equal('internal')
@@ -110,14 +129,6 @@ describe('ProfilingAction', function () {
             child.kill('SIGINT')
             done()
           }
-
-          if (res === 'initialized') {
-            child.send('km:cpu:profiling:start')
-
-            setTimeout(function () {
-              child.send('km:cpu:profiling:stop')
-            }, 500)
-          }
         })
       })
     }
@@ -129,7 +140,19 @@ describe('ProfilingAction', function () {
         const child = launch('../fixtures/features/profilingChild')
         let uuid
 
-        child.on('message', res => {
+        child.on('message', (res: IPCMessage | string) => {
+          if (typeof res === 'string') {
+            if (res === 'initialized') {
+              setTimeout(function () {
+                child.send('km:heap:sampling:start')
+              }, 100)
+
+              setTimeout(function () {
+                child.send('km:heap:sampling:stop')
+              }, 500)
+            }
+            return
+          }
 
           if (res.type === 'axm:action') {
             expect(res.data.action_type).to.equal('internal')
@@ -146,16 +169,6 @@ describe('ProfilingAction', function () {
 
             expect(res.data.type).to.equal('heapprofile')
             child.kill('SIGINT')
-          }
-
-          if (res === 'initialized') {
-            setTimeout(function () {
-              child.send('km:heap:sampling:start')
-            }, 100)
-
-            setTimeout(function () {
-              child.send('km:heap:sampling:stop')
-            }, 500)
           }
         })
 
@@ -168,7 +181,18 @@ describe('ProfilingAction', function () {
         const child = launch('../fixtures/features/profilingChild')
         let uuid
 
-        child.on('message', res => {
+        child.on('message', (res: IPCMessage | string) => {
+          if (typeof res === 'string') {
+            if (res === 'initialized') {
+              setTimeout(function () {
+                child.send({
+                  msg: 'km:heap:sampling:start',
+                  opts: { timeout: 500 }
+                })
+              }, 100)
+            }
+            return
+          }
 
           if (res.type === 'axm:action') {
             expect(res.data.action_type).to.equal('internal')
@@ -186,15 +210,6 @@ describe('ProfilingAction', function () {
 
             expect(res.data.type).to.equal('heapprofile')
             child.kill('SIGINT')
-          }
-
-          if (res === 'initialized') {
-            setTimeout(function () {
-              child.send({
-                msg: 'km:heap:sampling:start',
-                opts: { timeout: 500 }
-              })
-            }, 100)
           }
         })
 
@@ -208,7 +223,15 @@ describe('ProfilingAction', function () {
       it('should get heap dump data', (done) => {
         const child = launch('../fixtures/features/profilingChild')
 
-        child.on('message', res => {
+        child.on('message', (res: IPCMessage | string) => {
+          if (typeof res === 'string') {
+            if (res === 'initialized') {
+              setTimeout(function () {
+                child.send('km:heapdump')
+              }, 500)
+            }
+            return
+          }
 
           if (res.type === 'axm:action') {
             expect(res.data.action_type).to.equal('internal')
@@ -223,12 +246,6 @@ describe('ProfilingAction', function () {
             expect(typeof res.data.data).to.equal('string')
 
             child.kill('SIGINT')
-          }
-
-          if (res === 'initialized') {
-            setTimeout(function () {
-              child.send('km:heapdump')
-            }, 500)
           }
         })
 

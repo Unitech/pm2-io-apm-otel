@@ -2,11 +2,16 @@ import { expect, assert } from 'chai'
 import { fork } from 'child_process'
 import { resolve } from 'path'
 
+interface IPCMessage {
+  type?: string
+  data?: any
+}
+
 //process.env.DEBUG = 'axm:services:runtimeStats,axm:features:metrics:eventloop'
 
 const launch = (fixture) => {
   return fork(resolve(__dirname, fixture), [], {
-    execArgv: process.env.NYC_ROOT_ID ? process.execArgv : [ '-r', 'ts-node/register' ]
+    execArgv: [ '-r', 'ts-node/register' ]
   })
 }
 
@@ -20,7 +25,7 @@ describe('EventLoopHandlesRequests', function () {
   it('should send event loop with runtime stats', (done) => {
     const child = launch('../fixtures/metrics/gcv8Child')
 
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
       if (pck.type === 'axm:monitor') {
         const metricsName = Object.keys(pck.data)
         const metricsThatShouldBeThere = [
@@ -40,7 +45,7 @@ describe('EventLoopHandlesRequests', function () {
     process.env.PM2_APM_DISABLE_RUNTIME_STATS = 'true'
     const child = launch('../fixtures/metrics/gcv8Child')
 
-    child.on('message', pck => {
+    child.on('message', (pck: IPCMessage) => {
       if (pck.type === 'axm:monitor') {
         const metricsName = Object.keys(pck.data)
         const metricsThatShouldBeThere = [

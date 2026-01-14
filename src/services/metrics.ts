@@ -110,7 +110,7 @@ export class HistogramOptions extends Metric {
 export class MetricService implements Service {
 
   private metrics: Map<string, InternalMetric> = new Map()
-  private timer: NodeJS.Timer | null = null
+  private timer: NodeJS.Timeout | null = null
   private transport: Transport | null = null
   private logger: any = Debug('axm:services:metrics')
 
